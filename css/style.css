@@ -1,0 +1,87 @@
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0; padding: 0; width: 100%; height: 100%;
+  background: #0a0706;
+  overscroll-behavior: none;
+  touch-action: none;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+#stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#game {
+  display: block;
+  background: #120c0a;
+  touch-action: none;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+#dom-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  pointer-events: none;
+}
+
+#dom-overlay .field {
+  position: absolute;
+  pointer-events: auto;
+  background: #382519;
+  border: 2px solid #644128;
+  border-radius: 4px;
+  color: #f5ebd2;
+  font-family: Georgia, 'Times New Roman', serif;
+  padding: 0 8px;
+  outline: none;
+}
+
+#dom-overlay .field.active {
+  border-color: #d2aa32;
+}
+
+#dom-overlay .field::placeholder {
+  color: #8a7a68;
+}
+
+#rotate-prompt {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: #0a0706;
+  color: #f5ebd2;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+}
+
+#rotate-prompt .rotate-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  animation: rotate-hint 1.6s ease-in-out infinite;
+  display: inline-block;
+}
+
+#rotate-prompt p {
+  font-size: 16px;
+  max-width: 280px;
+  line-height: 1.5;
+}
+
+@keyframes rotate-hint {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(90deg); }
+}
+
+body.portrait-lock #stage { display: none; }
+body.portrait-lock #rotate-prompt { display: flex; }
