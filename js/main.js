@@ -66,7 +66,24 @@ canvas.addEventListener("pointermove", (e) => {
 canvas.addEventListener("click", (e) => {
   const { x, y } = toLogical(e.clientX, e.clientY);
   handleTap(x, y);
+  scheduleBotIfNeeded();
 });
+
+// ── Bot turn scheduling ──────────────────────────────────────────────────
+// Whenever the active player for the current phase is a bot, auto-play
+// their decision after a short, visible pause instead of waiting for a tap.
+let botTimer = null;
+function scheduleBotIfNeeded() {
+  if (botTimer) { clearTimeout(botTimer); botTimer = null; }
+  const actor = botActorFor(game);
+  if (actor && actor.isBot) {
+    botTimer = setTimeout(() => {
+      botTimer = null;
+      performBotAction(game);
+      scheduleBotIfNeeded();
+    }, BOT_DELAY_MS);
+  }
+}
 
 // ── Name-entry DOM overlay (native mobile keyboard for the setup screen) ──
 const nameInputs = [];
@@ -101,6 +118,9 @@ function syncNameInputs() {
 // ── Per-phase tap handling (mirrors the pygame main() event switch) ───────
 function handleTap(x, y) {
   const g = game;
+  // Ignore taps while a bot is deciding, to avoid racing its scheduled action.
+  const actor = botActorFor(g);
+  if (actor && actor.isBot) return;
   const hit = (label) => ui.hit(x, y, label);
 
   if (g.phase === Phase.SETUP_PLAYERS) {
@@ -108,12 +128,31 @@ function handleTap(x, y) {
       if (hit(String(n)) && g.num_players !== n) {
         g.num_players = n;
         while (g.setup_names.length < n) g.setup_names.push("");
+        while (g.setup_bots.length < n) g.setup_bots.push(false);
         syncNameInputs();
       }
     }
+    for (let i = 0; i < g.num_players; i++) {
+      if (hit(`bot_toggle_${i}`)) {
+        g.setup_bots[i] = !g.setup_bots[i];
+        if (g.setup_bots[i] && !(g.setup_names[i] || "").trim()) g.setup_names[i] = `Bot ${i + 1}`;
+      }
+    }
+    if (hit("🎮 Solo — moi + des bots")) {
+      if (g.num_players < 4) { g.num_players = 4; while (g.setup_names.length < 4) g.setup_names.push(""); while (g.setup_bots.length < 4) g.setup_bots.push(false); }
+      for (let i = 0; i < g.num_players; i++) {
+        g.setup_bots[i] = i !== 0;
+        if (!(g.setup_names[i] || "").trim()) g.setup_names[i] = i === 0 ? "Moi" : `Bot ${i + 1}`;
+      }
+      syncNameInputs();
+    }
     const all_named = Array.from({ length: g.num_players }, (_, i) => (g.setup_names[i] || "").trim()).every(Boolean);
     if (hit("Continue →") && all_named) {
-      g.players = Array.from({ length: g.num_players }, (_, i) => new Player((g.setup_names[i] || "").trim() || `P${i + 1}`));
+      g.players = Array.from({ length: g.num_players }, (_, i) => {
+        const pl = new Player((g.setup_names[i] || "").trim() || `P${i + 1}`);
+        pl.isBot = !!g.setup_bots[i];
+        return pl;
+      });
       g.phase = Phase.SETUP_CHARS; g.current_player_idx = 0;
       syncNameInputs();
     }

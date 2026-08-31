@@ -28,6 +28,23 @@ No build step, no npm install — it's plain HTML/CSS/JS.
 The game is designed landscape (it's meant to be laid on a table and passed
 around). On a phone held in portrait it shows a "rotate your phone" prompt.
 
+## Solo mode (play against bots)
+
+To test or tweak the game alone, use the **🎮 Solo — moi + des bots** button
+on the setup screen: it marks every player but the first as a bot and
+prefills their names. You can also toggle any individual player between
+🧑 human and 🤖 bot with the small button next to their name field, and mix
+humans and bots freely (e.g. 2 humans + 2 bots).
+
+Bots play every phase on their own — character pick, espionage, anonymous
+messages, votes, and accusations — with simple but coherent heuristics (they
+target players whose secrets they've uncovered, always counter-accuse when
+they can, occasionally leak intel or send voting instructions). Each bot
+decision fires about 650ms after it becomes their turn, so you can follow
+along on screen; taps are ignored while a bot is "thinking" to avoid racing
+its scheduled move. The turn-taking logic lives in
+[`js/bots.js`](js/bots.js).
+
 ## Project structure
 
 ```
@@ -39,6 +56,7 @@ js/spyicons.js       canvas ports of the 6 espionage method icons
 js/game.js           game data model & rules (Player, Game, phases, scoring)
 js/ui.js             button/panel/carousel drawing + touch hit-testing
 js/screens.js        one draw function per game phase
+js/bots.js           bot AI: decisions + auto-play scheduling for solo mode
 js/main.js           render loop, touch input, responsive scaling
 original-pygame/     the original desktop Pygame prototype (reference only)
 ```

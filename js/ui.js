@@ -100,7 +100,7 @@ class UI {
     drawPortrait(this.ctx, p.character, x + sz + 4, y + h / 2, sz);
     const tx = x + sz * 2 + 10;
     this.txt(p.character, "small", C_GOLD, tx, y + 8);
-    this.txt(p.name, "body", C_CREAM, tx, y + 26);
+    this.txt((p.isBot ? "🤖 " : "") + p.name, "body", C_CREAM, tx, y + 26);
     if (show_secret && p.secret_level) {
       const sc = SECRET_COLORS[p.secret_level], sn = SECRET_NAMES[p.secret_level];
       this.txt(`Lv${p.secret_level}: ${sn}`, "small", sc, tx, y + 48);

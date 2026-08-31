@@ -7,7 +7,13 @@ function nameFieldRect(g, i) {
   const col_w = 200, cols = 2, sx = W / 2 - col_w - 10;
   const col = i % cols, row = Math.floor(i / cols);
   const x = sx + col * (col_w + 20), y = 196 + row * 58;
-  return { x, y, w: col_w, h: 32, label: `Player ${i + 1}` };
+  return { x, y, w: 148, h: 32, label: `Player ${i + 1}` };
+}
+
+// The small 🤖/🧑 toggle sitting right of each name field.
+function botToggleRect(g, i) {
+  const r = nameFieldRect(g, i);
+  return { x: r.x + r.w + 6, y: r.y, w: 46, h: 32 };
 }
 
 function draw_setup_players(ui, g) {
@@ -18,11 +24,22 @@ function draw_setup_players(ui, g) {
     ui.btn(String(n), W / 2 - 100 + i * 90, 112, 70, 36, { col: sel ? C_DARK_RED : C_MID, hov: C_CRIMSON });
   });
   ui.txt("Player names:", "h3", C_CREAM, W / 2, 165, { cx: true });
+  const ctx = ui.ctx;
   for (let i = 0; i < g.num_players; i++) {
     const r = nameFieldRect(g, i);
-    ui.txt(r.label, "small", C_PARCHMENT, r.x, r.y - 18);
+    const isBot = !!g.setup_bots[i];
+    ui.txt(r.label + (isBot ? "  (bot)" : ""), "small", isBot ? C_GOLD : C_PARCHMENT, r.x, r.y - 18);
     // the editable box itself is a DOM <input> overlay — see main.js syncNameInputs()
+
+    const tr = botToggleRect(g, i);
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(tr.x, tr.y, tr.w, tr.h, 4); else ctx.rect(tr.x, tr.y, tr.w, tr.h);
+    ctx.fillStyle = isBot ? C_DARK_GRN : C_MID; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = isBot ? C_GOLD : C_BORDER; ctx.stroke();
+    ui.txt(isBot ? "🤖" : "🧑", "body", C_CREAM, tr.x + tr.w / 2, tr.y + tr.h / 2, { cx: true });
+    ui.buttons.push({ label: `bot_toggle_${i}`, rect: { x: tr.x, y: tr.y, w: tr.w, h: tr.h }, disabled: false });
   }
+  ui.btn("🎮 Solo — moi + des bots", W / 2 - 160, 402, 320, 40, { col: C_DARK_BLU, hov: C_BLUE });
   const all_named = Array.from({ length: g.num_players }, (_, i) => (g.setup_names[i] || "").trim()).every(Boolean);
   ui.btn("Continue →", W / 2 - 100, H - 70, 200, 44, { col: all_named ? C_CRIMSON : C_MID, dis: !all_named });
 }

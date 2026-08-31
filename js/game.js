@@ -30,6 +30,7 @@ class Player {
     this.known_secrets = {};     // {targetName: secretLevel}
     this.spy_log = new Set();    // "targetName|methodIndex"
     this.bribe_inbox = [];
+    this.isBot = false;
   }
 
   has_discovered(n) { return Object.prototype.hasOwnProperty.call(this.known_secrets, n); }
@@ -75,6 +76,7 @@ class Game {
     this.num_players = 4;
     this.setup_names = ["Beria", "Khrushchev", "Molotov", "Malenkov", "", ""];
     this.setup_chars = [null, null, null, null, null, null];
+    this.setup_bots = [false, false, false, false, false, false];
     this.active_input = -1;
   }
 
