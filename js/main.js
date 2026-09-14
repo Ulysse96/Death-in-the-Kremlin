@@ -26,7 +26,17 @@ const DRAWS = {
 };
 
 // ── Responsive scaling ──────────────────────────────────────────────────
+// The canvas keeps a 900×680 logical coordinate system, but its backing
+// store is sized to the device pixel ratio so the art stays sharp on phones.
+const DPR = Math.min(3, Math.max(1, window.devicePixelRatio || 1));
 let currentScale = 1;
+function applyBackingStore() {
+  const bw = Math.round(W * DPR), bh = Math.round(H * DPR);
+  if (canvas.width !== bw || canvas.height !== bh) {
+    canvas.width = bw; canvas.height = bh;
+  }
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);   // draw in logical units
+}
 function resize() {
   const vw = window.innerWidth, vh = window.innerHeight;
   // The game's layout is landscape (900×680). On a narrow, tall viewport
@@ -36,6 +46,7 @@ function resize() {
   document.body.classList.toggle("portrait-lock", isPhonePortrait);
   if (isPhonePortrait) return;
 
+  applyBackingStore();
   const sw = stage.clientWidth, sh = stage.clientHeight;
   const scale = Math.min(sw / W, sh / H);
   canvas.style.width = Math.floor(W * scale) + "px";

@@ -59,7 +59,7 @@ function draw_setup_chars(ui, g) {
     const bc = sel ? C_GOLD : (avail ? C_BORDER : rgb(50, 35, 25));
     ui.panel(cx2, cy2, cw, ch, bg, bc);
     drawPortrait(ui.ctx, char, cx2 + 60, cy2 + ch / 2, 52);
-    ui.txt(char, "h3", avail ? C_CREAM : C_GREY, cx2 + 120, cy2 + 28);
+    ui.txt(char, "h3", avail ? C_CREAM : C_GREY, cx2 + 120, cy2 + 28, { maxW: cw - 132 });
     if (!avail) ui.txt("(taken)", "small", C_GREY, cx2 + 120, cy2 + 52);
     if (avail) ui.buttons.push({ label: char, rect: { x: cx2, y: cy2, w: cw, h: ch }, disabled: false });
   });
@@ -122,9 +122,9 @@ function draw_spy_choose(ui, g) {
 function draw_spy_method(ui, g) {
   const p = g.current_player(), t = g.spy_target;
   ui.header("STEP 1: CHOOSE METHOD", `Spying on ${t.name}`);
-  drawPortrait(ui.ctx, p.character, 60, 120, 55);
+  drawPortrait(ui.ctx, p.character, 60, 124, 50);
   ui.txt(p.name, "small", C_PARCHMENT, 60, 182, { cx: true });
-  drawPortrait(ui.ctx, t.character, W - 60, 120, 55);
+  drawPortrait(ui.ctx, t.character, W - 60, 124, 50);
   ui.txt(t.name, "small", C_PARCHMENT, W - 60, 182, { cx: true });
   const bw = 340, bh = 58, sx = (W - bw * 2 - 12) / 2;
   const ctx = ui.ctx;
@@ -138,8 +138,8 @@ function draw_spy_method(ui, g) {
     ctx.fillStyle = bg; ctx.fill();
     ctx.lineWidth = 2; ctx.strokeStyle = bc; ctx.stroke();
     const icon = getSpyIcon(i);
-    if (used) { ctx.globalAlpha = 80 / 255; ctx.drawImage(icon, bx + 8, by + bh / 2 - 26); ctx.globalAlpha = 1; }
-    else ctx.drawImage(icon, bx + 8, by + bh / 2 - 26);
+    if (used) { ctx.globalAlpha = 80 / 255; ctx.drawImage(icon, bx + 8, by + bh / 2 - 26, 52, 52); ctx.globalAlpha = 1; }
+    else ctx.drawImage(icon, bx + 8, by + bh / 2 - 26, 52, 52);
     const tc = used ? C_GREY : C_CREAM;
     ui.txt(opt, "body", tc, bx + 68, by + bh / 2 - 9);
     if (used) ui.txt("(used)", "small", rgb(80, 60, 50), bx + bw - 60, by + bh / 2 - 7);

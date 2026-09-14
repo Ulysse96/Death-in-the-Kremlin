@@ -95,11 +95,17 @@ function _drawSpyIcon5(ctx) { // Break into the office
 const _SPY_ICON_FNS = [_drawSpyIcon0, _drawSpyIcon1, _drawSpyIcon2, _drawSpyIcon3, _drawSpyIcon4, _drawSpyIcon5];
 const _SPY_ICON_CACHE = {};
 
+// Rasterised at the device pixel ratio; blit with an explicit 52×52 size.
+const SPY_ICON_SIZE = 52;
+const SPY_ICON_DPR = Math.min(3, Math.max(1, (typeof window !== "undefined" && window.devicePixelRatio) || 1));
+
 function getSpyIcon(idx) {
   if (!_SPY_ICON_CACHE[idx]) {
     const off = document.createElement("canvas");
-    off.width = 52; off.height = 52;
+    off.width = Math.round(SPY_ICON_SIZE * SPY_ICON_DPR);
+    off.height = Math.round(SPY_ICON_SIZE * SPY_ICON_DPR);
     const octx = off.getContext("2d");
+    octx.scale(SPY_ICON_DPR, SPY_ICON_DPR);
     _SPY_ICON_FNS[idx](octx);
     _SPY_ICON_CACHE[idx] = off;
   }

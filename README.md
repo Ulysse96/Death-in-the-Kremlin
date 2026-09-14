@@ -78,12 +78,34 @@ original-pygame/     the original desktop Pygame prototype (reference only)
      know the accuser's secret, and whoever holds the lower level is purged.
 - The game ends when one player remains or someone wins a majority vote.
 
+## The cast
+
+Six Soviet animals, drawn entirely with Canvas 2D primitives — no image
+assets:
+
+| Character | Who they are |
+| --- | --- |
+| Marshal | a hound in a peaked cap, chest full of ribbons |
+| KGB Director | a grey wolf in a trench coat and fedora |
+| Youth President | an eager fox in pioneer uniform and pilotka |
+| Head Marxologist | a bespectacled ape with a scholar's beard |
+| Happiness Minister | a beaming rabbit in a red-starred ushanka |
+| Red Veteran | an old walrus in a papakha, tusks and medals |
+
 ## Notes on the port
 
-Everything on screen — the palette, the six hand-drawn portraits, the six
-spy-method icons, and every screen's layout — is a direct translation of the
-Pygame drawing calls into the Canvas 2D API, so the visuals match the
-original almost pixel-for-pixel. The only structural change is the
-setup-screen name fields: they're real `<input>` elements overlaid on the
-canvas so mobile browsers show a proper keyboard, instead of the Pygame
-version's hand-rolled text cursor.
+The palette, the screen layouts and the six spy-method icons are direct
+translations of the Pygame drawing calls into the Canvas 2D API. Two things
+deliberately differ from the original prototype:
+
+- **The portraits were redrawn.** The Pygame versions were flat colour
+  fills; the web ones use gradients, outlines, eye highlights and a shared
+  bust construction so the cast reads as one set with consistent lighting.
+  The original's Lysenkoism Prof. (a heron) was replaced by the Happiness
+  Minister (a rabbit in a chapka).
+- **Name entry uses real `<input>` elements** overlaid on the canvas, so
+  mobile browsers show a proper keyboard instead of the Pygame version's
+  hand-rolled text cursor.
+
+The canvas keeps a 900×680 logical coordinate system but its backing store
+is sized to the device pixel ratio, so the art stays sharp on phone screens.

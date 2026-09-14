@@ -21,7 +21,7 @@ const C_PURPLE = rgb(80, 30, 100);
 const C_GREY = rgb(130, 120, 110);
 const C_ARROW = rgb(70, 50, 30);
 
-const CHARACTERS = ["Marshal", "KGB Director", "Youth President", "Head Marxologist", "Lysenkoism Prof.", "Red Veteran"];
+const CHARACTERS = ["Marshal", "KGB Director", "Youth President", "Head Marxologist", "Happiness Minister", "Red Veteran"];
 const SPY_OPTIONS = ["Wire the phone", "Search the trash cans", "Bribe a subordinate", "Intercept the mail", "Follow at night", "Break into the office"];
 const SECRET_NAMES = { 1: "Deviant", 2: "Factious", 3: "Traitor" };
 const SECRET_COLORS = { 1: C_GOLD, 2: C_CRIMSON, 3: C_PURPLE };

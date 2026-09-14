@@ -38,9 +38,21 @@ class UI {
   }
 
   txt(text, fkey, col, x, y, opts = {}) {
-    const { cx = false, rx = false } = opts;
+    const { cx = false, rx = false, maxW = 0 } = opts;
     const ctx = this.ctx;
     ctx.font = this.fonts[fkey];
+    // Shrink rather than overflow when a label is too long for its slot
+    // (long character names used to be clipped by their card edge).
+    if (maxW > 0) {
+      const w = ctx.measureText(String(text)).width;
+      if (w > maxW) {
+        const m = this.fonts[fkey].match(/(\d+(?:\.\d+)?)px/);
+        if (m) {
+          const shrunk = Math.max(9, parseFloat(m[1]) * (maxW / w));
+          ctx.font = this.fonts[fkey].replace(/(\d+(?:\.\d+)?)px/, shrunk.toFixed(1) + "px");
+        }
+      }
+    }
     ctx.fillStyle = col;
     if (cx) { ctx.textAlign = "center"; ctx.textBaseline = "middle"; }
     else if (rx) { ctx.textAlign = "right"; ctx.textBaseline = "top"; }
@@ -99,8 +111,9 @@ class UI {
     const sz = Math.min(34, h / 2 - 2);
     drawPortrait(this.ctx, p.character, x + sz + 4, y + h / 2, sz);
     const tx = x + sz * 2 + 10;
-    this.txt(p.character, "small", C_GOLD, tx, y + 8);
-    this.txt((p.isBot ? "🤖 " : "") + p.name, "body", C_CREAM, tx, y + 26);
+    const availW = x + w - tx - 6;
+    this.txt(p.character, "small", C_GOLD, tx, y + 8, { maxW: availW });
+    this.txt((p.isBot ? "🤖 " : "") + p.name, "body", C_CREAM, tx, y + 26, { maxW: availW });
     if (show_secret && p.secret_level) {
       const sc = SECRET_COLORS[p.secret_level], sn = SECRET_NAMES[p.secret_level];
       this.txt(`Lv${p.secret_level}: ${sn}`, "small", sc, tx, y + 48);
